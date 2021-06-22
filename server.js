@@ -1,8 +1,12 @@
 const express = require('express');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 const handlebars = require('express-handlebars');
 const routes = require('./routes/index')
-    // creo una app de tipo express
-const app = express();
+const productos = require('./api/productos');
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/', routes());
@@ -18,13 +22,12 @@ app.set('view engine', 'hbs');
 app.set('views', './views');
 app.use(express.static('public'));
 
-// pongo a escuchar el servidor en el puerto indicado
 const puerto = 8080;
-const server = app.listen(puerto, () => {
-    console.log(`servidor escuchando en http://localhost:${puerto}`);
+io.on('connect', socket => {
+    console.log('usuario conectado');
+    socket.emit('lista', productos.listar())
 });
 
-// en caso de error, avisar
-server.on('error', error => {
-    console.log('error en el servidor:', error);
+http.listen(puerto, () => {
+    console.log(`Servidor escuchando en http://localhost:${puerto}`);
 });

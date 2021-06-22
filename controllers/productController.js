@@ -20,7 +20,7 @@ exports.getOneProduct = (req, res) => {
 exports.saveProduct = (req, res) => {
     let prod = productos.guardar(req.body)
     console.log('elemento guardado')
-    res.json(prod)
+    res.redirect('/')
 };
 
 exports.updateProduct = (req, res) => {
