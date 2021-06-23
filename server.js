@@ -23,9 +23,20 @@ app.set('views', './views');
 app.use(express.static('public'));
 
 const puerto = 8080;
+let messages = [
+    { author: "Juan", text: "Hola" },
+    { author: "Agus", text: "buenas" },
+    { author: "Mica", text: "holaXD" }
+];
+
 io.on('connect', socket => {
     console.log('usuario conectado');
-    socket.emit('lista', productos.listar())
+    socket.emit('lista', productos.listar());
+    socket.emit('messages', messages);
+    socket.on('new-message', data => {
+        messages.push(data);
+        io.sockets.emit('messages', messages);
+    });
 });
 
 http.listen(puerto, () => {

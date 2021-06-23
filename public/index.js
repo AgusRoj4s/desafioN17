@@ -26,18 +26,31 @@ const productTemplate = Handlebars.compile(`
 function renderProducts(prod = []) {
     const html = productTemplate({ prod, hayProductos: !!prod.length });
     return html;
-}
+};
 
 socket.on('lista', (data) => {
     let final = renderProducts(data);
     document.getElementById('datos').innerHTML = final;
-})
+});
 
-form.addEventListener('submit', event => {
-    event.preventDefault();
-    const title = titleInput.value;
-    const price = priceInput.value;
-    const thumbnail = thumbnailInput.value;
-    socket.emit('productAdd', { title, price, thumbnail });
-    form.reset();
-})
+socket.on('messages', (data) => {
+    render(data);
+});
+
+function addMessage(e) {
+    var mensaje = {
+        author: document.getElementById('username').value,
+        text: document.getElementById('texto').value
+    };
+    socket.emit('new-message', mensaje);
+    return false;
+}
+
+function render(data) {
+    let html = data.map(function(elem, index) {
+        return (`<div>
+                <strong>${elem.author}</strong>:
+                <em>${elem.text}</em> </div>`)
+    }).join(" ");
+    document.getElementById('messages').innerHTML = html;
+}

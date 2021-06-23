@@ -15,7 +15,8 @@
     }
     
     .jumbotron {
-        min-height: 100vh;
+        min-height: 10vh;
+        min-width: 5vh;
     }
 </style>
 
@@ -31,7 +32,6 @@
 </head>
 
 <body>
-
     <div class="jumbotron">
         <div class="table-responsive">
             <table class="table table-dark">
@@ -47,10 +47,22 @@
                         <br>
                         <button style="background-color: green;">Enviar</button>
                     </form>
-                    <div id='datos'></div>
                 </body>
             </table>
         </div>
+    </div>
+    <div class="jumbotron">
+        <div id='datos'></div>
+    </div>
+    <div class="jumbotron">
+        <h1>Centro de Mensajes</h1>
+        <br>
+        <form onsubmit="return addMessage(this)">
+            <input type="text" id="username" placeholder="Tu nombre">
+            <input type="text" id="texto" placeholder="Cuentanos algo">
+            <input type="submit" value="Enviar">
+        </form>
+        <div id="messages"></div>
     </div>
 </body>
 
