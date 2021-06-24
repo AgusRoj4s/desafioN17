@@ -46,11 +46,20 @@ function addMessage(e) {
     return false;
 }
 
+function horaFecha() {
+    let hoy = new Date();
+    let fecha = hoy.getDate() + '/' + (hoy.getMonth() + 1) + '/' + hoy.getFullYear();
+    let hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds();
+    return fecha + " " + hora;
+}
+
 function render(data) {
+    let fecha = horaFecha();
     let html = data.map(function(elem, index) {
         return (`<div>
-                <strong>${elem.author}</strong>:
-                <em>${elem.text}</em> </div>`)
+                <strong style="color:blue">${elem.author}</strong>
+                <strong style="color:brown">[${elem.hour}]:</strong>
+                <em style="color:green" face="italic" >${elem.text}</em> </div>`)
     }).join(" ");
     document.getElementById('messages').innerHTML = html;
 }
