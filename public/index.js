@@ -46,15 +46,7 @@ function addMessage(e) {
     return false;
 }
 
-function horaFecha() {
-    let hoy = new Date();
-    let fecha = hoy.getDate() + '/' + (hoy.getMonth() + 1) + '/' + hoy.getFullYear();
-    let hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds();
-    return fecha + " " + hora;
-}
-
 function render(data) {
-    let fecha = horaFecha();
     let html = data.map(function(elem, index) {
         return (`<div>
                 <strong style="color:blue">${elem.author}</strong>

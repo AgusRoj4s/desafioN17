@@ -33,7 +33,6 @@ function horaFecha() {
     return fecha + " " + hora;
 }
 
-
 io.on('connect', socket => {
     console.log('usuario conectado');
     socket.emit('lista', productos.listar());
