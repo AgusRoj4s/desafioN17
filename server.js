@@ -3,10 +3,11 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const handlebars = require('express-handlebars');
-const routes = require('./routes/index')
+const routes = require('./routes/index');
 const productos = require('./api/productos');
-const fs = require('fs')
-
+const { horaFecha } = require('./utils/index');
+const sqlite3 = require('./options/sqlite3');
+const knex = require('knex')(sqlite3);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,23 +26,56 @@ app.use(express.static('public'));
 
 const puerto = 8080;
 let messages = [];
-
-function horaFecha() {
-    let hoy = new Date();
-    let fecha = hoy.getDate() + '/' + (hoy.getMonth() + 1) + '/' + hoy.getFullYear();
-    let hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds();
-    return fecha + " " + hora;
-}
+(async() => {
+    try {
+        await knex.schema.dropTableIfExists('productos');
+        await knex.schema.createTable('productos', table => {
+            table.increments('id').notNullable();
+            table.string('name').notNullable();
+            table.integer('price').notNullable();
+            table.string('thumbnail').notNullable();
+        }).then(() => {
+            console.log('tabla productos cargada!');
+        });
+    } catch (error) {
+        console.log(error)
+    }
+})();
 
 io.on('connect', socket => {
     console.log('usuario conectado');
     socket.emit('lista', productos.listar());
     socket.emit('messages', messages);
+    (async() => {
+        try {
+            await knex.schema.dropTableIfExists('mensajes');
+            await knex.schema.createTable('mensajes', table => {
+                table.increments('id').notNullable();
+                table.string('mensajeChat').notNullable();
+            }).then(() => {
+                console.log('tabla chat cargada!');
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    })();
+
     socket.on('new-message', data => {
-        data.hour = horaFecha();
-        messages.push(data);
-        fs.appendFileSync('./chat.txt', JSON.stringify(data));
-        io.sockets.emit('messages', messages);
+        (async() => {
+            try {
+                data.hour = horaFecha();
+                messages.push(data);
+                dato = JSON.stringify(data);
+                let variable = {
+                    mensajeChat: dato
+                }
+                await knex('mensajes').insert(variable);
+                await io.sockets.emit('messages', messages);
+                await console.log('Mensaje Guardado!');
+            } catch (error) {
+                console.log(error)
+            }
+        })();
     });
 });
 

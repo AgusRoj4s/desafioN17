@@ -3,7 +3,6 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const productos = require('../api/productos');
 
-
 module.exports = () => {
     router.get('/productos/vista', (req, res) => {
         let prod = productos.listar();
