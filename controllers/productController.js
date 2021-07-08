@@ -1,11 +1,20 @@
 const productos = require('../api/productos');
 const sqlite3 = require('../options/sqlite3');
 const knex = require('knex')(sqlite3);
+
 exports.getProducts = (req, res) => {
     let prod = productos.listar()
     if (prod == 0) {
         res.json({ error: 'no hay productos cargados' })
     } else {
+        knex.from('productos').select('*')
+            .then(rows => {
+                for (row of rows) {
+                    console.log(`PRODUCTOS : [[${row['name']}] [${row['price']}] [${row['thumbnail']}]]`);
+                }
+            }).catch(error => {
+                console.log('error:', error);
+            });
         res.json(prod)
     }
 };
